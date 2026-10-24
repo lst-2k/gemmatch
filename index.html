@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gem Match</title>
+<meta name="description" content="A 3D gem match-3 game with wild onyx, opal and tourmaline specials and mega blasts.">
+<meta property="og:title" content="Gem Match">
+<meta property="og:description" content="Can you beat my score?">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--gold:#f0c35a;--ink:#f4efe6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#3b2a7a,#150f33 55%,#07051a);color:var(--ink);font:15px/1.4 system-ui,-apple-system,sans-serif;display:flex;justify-content:center;-webkit-user-select:none;user-select:none}
+main{width:min(100%,540px);padding:12px 12px 28px;position:relative}
+.hd{display:flex;align-items:center;gap:8px;margin:4px 0 10px}
+h1{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;margin:0;font:800 27px/1 Cinzel,Georgia,serif;letter-spacing:2px;background:linear-gradient(180deg,#fff3c4,#f0c35a 55%,#b8862a);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 svg{width:28px;height:28px;filter:drop-shadow(0 2px 2px #000a)}
+button{font:800 16px Cinzel,Georgia,serif;background:linear-gradient(#ffe39a,#d9a441);color:#3a2606;border:0;border-bottom:4px solid #8a5f12;border-radius:999px;padding:11px 30px;cursor:pointer}
+button:active{transform:translateY(2px);border-bottom-width:2px}
+.ib{width:40px;height:40px;padding:0;font-size:18px;font-family:system-ui}
+.st{display:flex;gap:8px;margin-bottom:10px}
+.st div{flex:1;padding:6px 10px;border-radius:10px;background:linear-gradient(145deg,#2d2360,#171233);border:1px solid #ffffff22;box-shadow:inset 0 1px 0 #fff3,0 3px 0 #0007}
+.st b{display:block;font:800 21px/1.1 Cinzel,Georgia,serif}.st span{font-size:12px;opacity:.7}
+#lv{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:13px}
+#lv i{flex:1;height:10px;border-radius:6px;background:#0008;overflow:hidden;box-shadow:inset 0 2px 3px #000}
+#bf{display:block;height:100%;width:0;background:linear-gradient(90deg,#f0c35a,#fff3b0);transition:width .4s}
+#lt{font:800 14px Cinzel,Georgia,serif;color:var(--gold)}
+.fr{position:relative;padding:3.4%;border-radius:20px;background:linear-gradient(145deg,#ffeaa6,#c9953a 40%,#7a5416 70%,#e8c26a);box-shadow:0 8px 0 #4a3209,0 18px 30px #000b,inset 0 2px 2px #fff9,inset 0 -3px 4px #0006}
+#board{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;container-type:inline-size;touch-action:none;background:#0e0924;box-shadow:inset 0 6px 14px #000e,inset 0 -2px 5px #fff3}
+.cl{position:absolute;width:12.5%;height:12.5%;padding:.5%}
+.cl i{display:block;height:100%;border-radius:12%;background:linear-gradient(145deg,#33276f,#171035);box-shadow:inset 2px 2px 3px #ffffff2a,inset -3px -3px 5px #000b}
+.gm{position:absolute;left:0;top:0;width:12.5%;height:12.5%;cursor:pointer;transition:transform .34s cubic-bezier(.4,1.25,.55,1)}
+.gm svg{position:absolute;inset:5%;width:90%;height:90%;filter:drop-shadow(0 3px 2px #000c);transition:transform .15s}
+.gm.w svg{filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 18px #c8a0ff) drop-shadow(0 3px 2px #000c);animation:wp .7s ease-in-out infinite alternate}
+.gm.w::before{content:'';position:absolute;inset:-4%;border-radius:50%;background:conic-gradient(#ff3b3b,#ffb43b,#f4ff3b,#3bff7a,#3bd0ff,#7a3bff,#ff3bd0,#ff3b3b);filter:blur(6px);opacity:.9;animation:sp 1.6s linear infinite;z-index:-1}
+@keyframes sp{to{transform:rotate(360deg)}}@keyframes wp{to{transform:scale(1.16)}}
+.gm.sp svg{filter:drop-shadow(0 0 9px var(--gl)) drop-shadow(0 3px 2px #000c);animation:pl 1s ease-in-out infinite alternate}
+.gm.sel svg{transform:scale(1.13);filter:drop-shadow(0 0 7px #fff) drop-shadow(0 3px 2px #000c)}
+.gm.hint svg{animation:pl .55s ease-in-out infinite alternate}
+.gm.born svg{animation:bo .5s cubic-bezier(.3,1.6,.5,1)}
+.gm.shk svg{animation:sk .1s linear infinite}.gm.shk2 svg{animation:sk .055s linear infinite;filter:brightness(1.4)}
+.gm.pop{z-index:2}.gm.pop svg{animation:po .3s forwards}
+@keyframes pl{to{transform:scale(1.09)}}@keyframes bo{from{transform:scale(0)}}
+@keyframes sk{0%{transform:translate(-3px,2px) rotate(-5deg)}50%{transform:translate(3px,-3px) rotate(5deg)}100%{transform:translate(-3px,2px) rotate(-5deg)}}
+@keyframes po{40%{transform:scale(1.35);filter:brightness(2)}100%{transform:scale(0);opacity:0}}
+.sh{position:absolute;width:8px;height:8px;margin:-4px;z-index:3;transform:rotate(45deg);animation:sh .5s ease-out forwards}
+@keyframes sh{to{transform:translate(var(--dx),var(--dy)) rotate(225deg) scale(.2);opacity:0}}
+.pv{position:absolute;z-index:4;pointer-events:none;font:800 4cqw/1 Cinzel,Georgia,serif;color:#fff;text-shadow:0 1px 0 #000,0 0 8px var(--c);animation:pv .8s ease-out forwards}
+@keyframes pv{from{opacity:0;transform:translate(-50%,-40%) scale(.6)}20%{opacity:1;transform:translate(-50%,-70%) scale(1.15)}to{opacity:0;transform:translate(-50%,-200%)}}
+.x2{position:absolute;z-index:5;pointer-events:none;white-space:nowrap;font:800 7cqw/1 Cinzel,Georgia,serif;color:#ffe08a;text-shadow:0 2px 0 #7a2a00,0 0 14px #ff9d00;animation:xx 1s ease-out forwards}
+@keyframes xx{from{transform:translate(-50%,-50%) scale(.4);opacity:0}25%{opacity:1;transform:translate(-50%,-90%) scale(1.3)}to{transform:translate(-50%,-260%);opacity:0}}
+.ring{position:absolute;width:12.5%;aspect-ratio:1;border:5px solid #fff;border-radius:50%;z-index:3;pointer-events:none;animation:rg .65s ease-out forwards}
+@keyframes rg{from{transform:translate(-50%,-50%) scale(.3);opacity:1}to{transform:translate(-50%,-50%) scale(7);opacity:0}}
+.flash{position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(circle,#fff,#ffd36acc 40%,#0000 75%);animation:fl .5s ease-out forwards}@keyframes fl{from{opacity:.9}to{opacity:0}}
+.streak{position:absolute;left:0;width:100%;height:12.5%;z-index:3;pointer-events:none;background:linear-gradient(90deg,#fff0,#fff 50%,#fff0);box-shadow:0 0 18px #fff;animation:stk .5s ease-out forwards}
+.streak.v{top:0;width:12.5%;height:100%;background:linear-gradient(180deg,#fff0,#fff 50%,#fff0);animation-name:stv}
+@keyframes stk{from{transform:translateX(-100%)}to{transform:translateX(100%);opacity:0}}@keyframes stv{from{transform:translateY(-100%)}to{transform:translateY(100%);opacity:0}}
+#bn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;background:#1a1040ee;border:2px solid var(--gold);border-radius:16px;padding:16px 26px;text-align:center;white-space:nowrap;animation:bo .5s cubic-bezier(.3,1.4,.5,1)}
+#bn[hidden],#ov[hidden]{display:none}#bn b{display:block;font:800 26px Cinzel,Georgia,serif;color:var(--gold)}
+#msg{min-height:22px;margin:16px 4px 0;text-align:center;opacity:.85}
+#ov{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:9;padding:20px}
+#ov>div{background:linear-gradient(160deg,#2b2060,#130d30);border:2px solid var(--gold);border-radius:18px;padding:24px 24px;width:min(90vw,370px);max-height:90vh;overflow:auto;text-align:center;box-shadow:0 14px 40px #000c}
+#ov h2{font:800 26px/1.1 Cinzel,Georgia,serif;margin:0 0 12px;color:var(--gold)}
+#ob{margin:0 0 16px}#ob ul{text-align:left;padding-left:20px;margin:0}#ob li{margin:0 0 7px}#ob b{font:800 40px Cinzel,Georgia,serif;display:block;color:#fff}
+#rain{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.rg{position:absolute;top:-70px;animation:rf 2.8s ease-in forwards}.rg svg{width:100%;height:100%;filter:drop-shadow(0 2px 2px #000a)}
+@keyframes rf{to{transform:translateY(115vh) rotate(var(--r))}}
+.sflash{position:fixed;inset:0;background:radial-gradient(circle,#fff,#ffd36a88 50%,#0000 80%);animation:fl .8s ease-out forwards}
+.x2.big{font-size:10cqw}
+.fr.glow{animation:fg 2s ease-out}@keyframes fg{0%,30%{box-shadow:0 0 50px 16px #ffd36a,0 8px 0 #4a3209,0 18px 30px #000b}100%{box-shadow:0 8px 0 #4a3209,0 18px 30px #000b}}
+.gm.op svg{animation:hr 3s linear infinite,pl .9s ease-in-out infinite alternate}
+@keyframes hr{from{filter:hue-rotate(0deg) drop-shadow(0 0 9px #fff) drop-shadow(0 3px 2px #000c)}to{filter:hue-rotate(360deg) drop-shadow(0 0 9px #fff) drop-shadow(0 3px 2px #000c)}}
+.ri{flex:none;display:inline-block;width:38px;height:38px}.ri svg{width:100%;height:100%;filter:drop-shadow(0 2px 2px #000a)}
+.ri2{flex:none;display:flex}.ri2 .ri{width:34px;height:34px}
+.ic{display:flex;align-items:center;gap:10px;margin-left:-14px}
+.gr{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.gi{display:flex;flex-direction:column;align-items:center;text-align:center;font-size:11px;line-height:1.2}
+.gi .ri{width:36px;height:36px}.gi .p{font:800 14px Cinzel,Georgia,serif;color:var(--gold)}
+#key{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 10px;margin:24px 0 0}
+.k{display:flex;align-items:center;gap:3px;font:800 11px Cinzel,Georgia,serif;color:var(--gold)}
+.k svg{width:22px;height:22px;filter:drop-shadow(0 1px 1px #000a)}
+.k.sep{width:1px;height:18px;background:#ffffff33}
+#msg{margin-top:10px}
+h1.ttl{flex:none;width:100%;background:linear-gradient(145deg,#3d2f82,#1a1240);-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink);gap:14px;padding:10px 14px;border-radius:16px;border:2px solid #c9953a;box-shadow:inset 0 2px 2px #fff5,inset 0 -4px 8px #0009,0 6px 0 #4a3209,0 14px 22px #000a}
+.hd{margin:6px 0 16px}
+h1.ttl svg{width:clamp(24px,7.5vw,32px);height:clamp(24px,7.5vw,32px);animation:bob 2.4s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-3px) rotate(6deg)}}
+.t3{position:relative;display:inline-block;font:800 clamp(22px,7vw,30px)/1.1 Cinzel,Georgia,serif;letter-spacing:2px;text-transform:uppercase}
+.t3::before{content:attr(data-t);position:absolute;left:0;top:0;color:#7a4a08;text-shadow:1px 1px 0 #7a4a08,2px 2px 0 #6a3f06,3px 3px 0 #5a3405,4px 4px 0 #4a2a04,5px 5px 0 #3a2003,6px 9px 10px #000b}
+.t3 .f{position:relative;background:linear-gradient(105deg,#0000 38%,#fffd 50%,#0000 62%) 0 0/250% 100%,linear-gradient(180deg,#fffbe0,#ffe07a 40%,#f0a830 62%,#b8741a);-webkit-background-clip:text;background-clip:text;color:transparent;animation:shn 3.6s linear infinite}
+@keyframes shn{from{background-position:150% 0,0 0}to{background-position:-150% 0,0 0}}
+#lv .ib{width:34px;height:34px;font-size:15px;flex:none}
+#top{position:absolute;inset:3.4%;pointer-events:none;z-index:7;container-type:inline-size}
+@media (prefers-reduced-motion:reduce){.gm svg,.gm.sp svg,.gm.w svg{animation:none}}
+</style></head><body><main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="df"></defs></svg>
+<div class="hd"><h1 class="ttl"><span id="gl"></span><span class="t3" data-t="Gem Match"><span class="f">Gem Match</span></span><span id="gr"></span></h1></div>
+<div class="st"><div><b id="sc">0</b><span>Score</span></div><div><b id="sh">10</b><span>Shots left</span></div><div><b id="be">0</b><span>Best</span></div></div>
+<div id="lv"><span id="lt">Level 1</span><i><b id="bf"></b></i><span id="lg"></span><button class="ib" id="rb" aria-label="How to play">?</button><button class="ib" id="mb" aria-label="Sound">🔊</button></div>
+<div class="fr"><div id="board"><div id="cells"></div></div><div id="bn" hidden></div><div id="top"></div></div>
+<div id="key"></div>
+<p id="msg"></p>
+</main>
+<div id="rain"></div>
+<div id="ov"><div><h2 id="oh"></h2><div id="ob"></div><button id="og"></button></div></div>
+<audio id="bgm" loop preload="auto" src="turbo-ascent.mp3"></audio>
+<script>
+const N=8,W=7,DI=8,RU=9,$=id=>document.getElementById(id),B=$('board'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const oct=(a,b,k)=>[[50-a+k,50-b],[50+a-k,50-b],[50+a,50-b+k],[50+a,50+b-k],[50+a-k,50+b],[50-a+k,50+b],[50-a,50+b-k],[50-a,50-b+k]];
+const hexa=r=>[0,1,2,3,4,5].map(i=>[50+r*Math.cos(Math.PI/3*i-Math.PI/2),50+r*Math.sin(Math.PI/3*i-Math.PI/2)]);
+const SHP={cush:()=>oct(40,40,17),emer:()=>oct(34,42,13),wide:()=>oct(42,34,13),hex:()=>hexa(43),kite:()=>[[50,6],[88,42],[50,94],[12,42]],dia:()=>[[16,34],[34,12],[66,12],[84,34],[50,90]],pear:()=>[[50,6],[74,30],[84,60],[70,86],[50,94],[30,86],[16,60],[26,30]],shld:()=>[[50,6],[86,22],[86,62],[50,94],[14,62],[14,22]]};
+const GEM=[['Sapphire',['#9cc4ff','#2456e0','#0a1c66'],'cush'],['Emerald',['#a0ffc4','#14a85a','#04502a'],'emer'],['Ruby',['#ffb8c0','#e0183a','#620418'],'pear'],['Amber',['#ffc277','#e8791a','#7a3204'],'hex'],['Amethyst',['#e8c0ff','#9a40e0','#41137a'],'kite'],['Topaz',['#fff6a8','#f5d020','#9a7a06'],'wide'],['Diamond',['#ffffff','#d2eeff','#7fb6e8'],'dia'],['Onyx',['#9a9aaa','#2a2a33','#050508'],'cush'],['Opal',0,'opal'],['Tourmaline',['#ffc0e4','#ee5aa8','#16a368'],'shld']];
+const COL=['#4a7cff','#2fd47a','#ff3050','#f5a82a','#b066f0','#f5d020','#e6f6ff','#aaaabb','#ffc2ea','#ee5aa8'];
+$('df').innerHTML=GEM.map((g,t)=>g[2]=='pearl'?`<radialGradient id="g${t}" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#efe5ee"/><stop offset="1" stop-color="#a99bb0"/></radialGradient>`:g[2]=='opal'?`<linearGradient id="g${t}" x1="0" y1="0" x2="1" y2="1">${['#ff9ad0','#ffe6a0','#9fffd8','#9ac8ff','#d89aff'].map((c,i)=>`<stop offset="${i/4}" stop-color="${c}"/>`).join('')}</linearGradient>`:`<linearGradient id="g${t}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${g[1][0]}"/><stop offset=".5" stop-color="${g[1][1]}"/><stop offset="1" stop-color="${g[1][2]}"/></linearGradient><linearGradient id="g${t}t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${g[1][0]}"/><stop offset="1" stop-color="${g[1][1]}"/></linearGradient>`).join('');
+const SV=GEM.map((g,t)=>{let s='';
+ if(g[2]=='pearl')s=`<circle cx="50" cy="52" r="40" fill="url(#g${t})"/><ellipse cx="37" cy="36" rx="13" ry="8" fill="#fff" opacity=".85" transform="rotate(-30 37 36)"/><circle cx="50" cy="52" r="40" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="2"/>`;
+ else if(g[2]=='opal')s=`<ellipse cx="50" cy="52" rx="42" ry="35" fill="url(#g${t})"/><ellipse cx="50" cy="52" rx="42" ry="35" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="2"/><circle cx="62" cy="58" r="11" fill="#8fffd0" opacity=".5"/><circle cx="43" cy="63" r="9" fill="#ff8ad0" opacity=".5"/><circle cx="66" cy="42" r="8" fill="#9ac8ff" opacity=".55"/><ellipse cx="38" cy="40" rx="15" ry="8" fill="#fff" opacity=".7" transform="rotate(-25 38 40)"/><path d="M70 30l2-6 2 6 6 2-6 2-2 6-2-6-6-2z" fill="#fff"/>`;
+ else if(g[2]=='dia'){const G=[[14,34],[32,34],[50,34],[68,34],[86,34]],T=[[34,14],[66,14]],A=[50,92],pl=(p,f,o)=>`<polygon points="${p}" fill="${f}" opacity="${o}"/>`,O='14,34 34,14 66,14 86,34 50,92';
+  s=`<polygon points="${O}" fill="url(#g${t})"/>`+pl([G[0],T[0],G[1]],'#fff',.55)+pl([T[0],G[1],G[2]],'#9ad0ff',.35)+pl([T[0],T[1],G[2]],'#fff',.8)+pl([T[1],G[2],G[3]],'#7fb6e8',.3)+pl([T[1],G[3],G[4]],'#fff',.25)+pl([G[0],G[1],A],'#fff',.45)+pl([G[1],G[2],A],'#bfe3ff',.25)+pl([G[2],G[3],A],'#000',.12)+pl([G[3],G[4],A],'#000',.3)+`<path d="M14 34H86M34 14L32 34M34 14L50 34M66 14L50 34M66 14L68 34M32 34L50 92M50 34L50 92M68 34L50 92" stroke="#fff" stroke-opacity=".7" stroke-width="1.2" fill="none"/><polygon points="${O}" fill="none" stroke="#3a6a9a" stroke-opacity=".7" stroke-width="2"/><path d="M26 20l3-9 3 9 9 3-9 3-3 9-3-9-9-3z" fill="#fff"/><path d="M66 56l2-5 2 5 5 2-5 2-2 5-2-5-5-2z" fill="#fff" opacity=".9"/>`}
+ else{const P=SHP[g[2]](),n=P.length,Q=P.map(p=>[50+(p[0]-50)*.5-2,50+(p[1]-50)*.5-3]);
+  s=`<polygon points="${P}" fill="url(#g${t})"/>`;
+  P.forEach((A,i)=>{const C=P[(i+1)%n],mx=(A[0]+C[0])/2-50,my=(A[1]+C[1])/2-50,sh=(-.55*mx-.83*my)/(Math.hypot(mx,my)||1);
+   s+=`<polygon points="${[A,C,Q[(i+1)%n],Q[i]]}" fill="${sh>0?'#fff':'#000'}" opacity="${(Math.abs(sh)*.45).toFixed(2)}"/><line x1="${A[0]}" y1="${A[1]}" x2="${Q[i][0]}" y2="${Q[i][1]}" stroke="#fff" stroke-opacity=".3"/>`});
+  s+=`<polygon points="${Q}" fill="url(#g${t}t)" opacity=".9"/><polygon points="${P}" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="2"/><path d="M33 27l3-8 3 8 8 3-8 3-3 8-3-8-8-3z" fill="#fff" opacity=".9"/>`}
+ return `<svg viewBox="0 0 100 100">${s}</svg>`});
+$('gl').innerHTML=SV[0];$('gr').innerHTML=SV[2];
+$('key').innerHTML=[0,1,2,3,4,5,6].map(t=>`<span class="k">${SV[t]}${(t+1)*20}</span>`).join('')+`<span class="k sep"></span><span class="k">${SV[7]}x3</span><span class="k">${SV[8]}4+</span><span class="k">${SV[9]}5+</span>`;
+for(let i=0;i<N*N;i++)$('cells').insertAdjacentHTML('beforeend',`<div class="cl" style="left:${i%N*12.5}%;top:${(i/N|0)*12.5}%"><i></i></div>`);
+const rnd=()=>Math.random()*7|0,shotsFor=l=>l<=5?10:l<=10?20:25,target=l=>1000+500*l+100*l*l;
+const val=b=>b.t==W?160:b.t<7?(b.t+1)*20:0,adj=(a,b)=>Math.abs(a.r-b.r)+Math.abs(a.c-b.c)==1;
+let g,score=0,shots=10,level=1,lv=0,best=0,busy=true,sel=null,hintT,hinted=[],freshRack=false,AC,NZ,mute=false;
+try{best=+localStorage.getItem('gm-best')||0}catch(e){}
+const say=t=>$('msg').textContent=t;
+/* audio */
+function au(){if(mute)return;if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();const n=AC.sampleRate,b=AC.createBuffer(1,n,n),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;NZ=b}catch(e){return}}if(AC.state!='running')AC.resume();return AC}
+function tone(f,t0=0,d=.2,v=.12,ty='sine'){const a=au();if(!a)return;const t=a.currentTime+t0,o=a.createOscillator(),k=a.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);k.gain.setValueAtTime(v,t);k.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(k).connect(a.destination);o.start(t);o.stop(t+d+.02)}
+function whoosh(z=.5,t0=0){const a=au();if(!a)return;const t=a.currentTime+t0,d=.25+z*.6,s=a.createBufferSource(),f=a.createBiquadFilter(),k=a.createGain();s.buffer=NZ;s.loop=true;f.type='bandpass';f.Q.value=1;f.frequency.setValueAtTime(300,t);f.frequency.exponentialRampToValueAtTime(2600,t+d*.7);k.gain.setValueAtTime(.001,t);k.gain.exponentialRampToValueAtTime(.2+z*.3,t+d*.35);k.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f).connect(k).connect(a.destination);s.start(t);s.stop(t+d+.05)}
+function boom(){const a=au();if(!a)return;const t=a.currentTime,o=a.createOscillator(),k=a.createGain();o.frequency.setValueAtTime(110,t);o.frequency.exponentialRampToValueAtTime(26,t+.9);k.gain.setValueAtTime(.85,t);k.gain.exponentialRampToValueAtTime(.001,t+1.1);o.connect(k).connect(a.destination);o.start(t);o.stop(t+1.15);whoosh(1)}
+const ting=(p,t0=0)=>{tone(1100*p,t0,.3,.1);tone(2300*p,t0,.18,.04)};
+const chime=(arr,combo)=>{arr.forEach((b,i)=>ting((1+b.t%7*.09)*(1+Math.min(combo-1,5)*.06),Math.min(i,10)*.04));whoosh(.2+Math.min(.6,arr.length*.06))};
+const bgm=$('bgm');bgm.volume=.3;let playing=false;
+function musicSync(){try{if(playing&&!mute){const q=bgm.play();if(q&&q.catch)q.catch(()=>{})}else bgm.pause()}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)bgm.pause();else musicSync()});
+/* ui + fx */
+function ui(){const t=target(level);$('sc').textContent=score;$('sh').textContent=shots;$('be').textContent=Math.max(best,score);$('lt').textContent='Level '+level;$('lg').textContent=Math.min(lv,t)+' / '+t;$('bf').style.width=Math.min(100,lv/t*100)+'%'}
+const pos=b=>'left:'+(b.c+.5)*12.5+'%;top:'+(b.r+.5)*12.5+'%';
+function fx(cls,css,txt){const e=document.createElement('i');e.className=cls;e.style.cssText=css;if(txt)e.textContent=txt;(/x2|pv/.test(cls)?$('top'):B).appendChild(e);setTimeout(()=>e.remove(),1500)}
+function burst(b){for(let i=0;i<6;i++){const a=Math.PI/3*i+Math.random();fx('sh',pos(b)+';--dx:'+Math.cos(a)*40+'px;--dy:'+Math.sin(a)*40+'px;background:'+COL[b.t])}}
+/* board */
+const place=(b,r,c)=>{b.r=r;b.c=c;b.e.style.transform=`translate(${c*100}%,${r*100}%)`};
+function mk(t,r,c){const e=document.createElement('div');e.className='gm'+(t==W?' w':t>W?' sp':'')+(t==DI?' op':'');e.innerHTML=SV[t];e.style.setProperty('--gl',t==RU?'#ff6ac0':'#ffe0f6');const b={t,e};e.onpointerdown=ev=>down(ev,b);B.appendChild(e);place(b,r,c);return b}
+function find(){const m=new Set();m.v=new Map();
+ const scan=l=>{let i=0;while(i<N){let col=-1,j=i;
+  for(;j<N;j++){const t=l[j].t;if(t>W){if(j==i)j++;break}if(t==W)continue;if(col<0)col=t;else if(t!=col)break}
+  if(j-i>=5)(m.big5=m.big5||[]).push(l[i+((j-i)>>1)]);else if(j-i>=4)(m.big=m.big||[]).push(l[i+((j-i)>>1)]);
+  if(j-i>=3)for(let x=i;x<j;x++){const b=l[x],v=(b.t==W?(col<0?8:col+1):b.t+1)*20;m.add(b);m.v.set(b,Math.max(m.v.get(b)||0,v))}
+  let k=j;while(k>i&&l[k-1].t==W)k--;i=(k>i&&j<N)?k:j}};
+ for(let r=0;r<N;r++)scan(g[r]);for(let c=0;c<N;c++)scan(g.map(w=>w[c]));return m}
+function moves(){const o=[];for(let r=0;r<N;r++)for(let c=0;c<N;c++)for(const[dr,dc]of[[0,1],[1,0]]){const r2=r+dr,c2=c+dc;if(r2>=N||c2>=N)continue;
+ const x=g[r][c],y=g[r2][c2];g[r][c]=y;g[r2][c2]=x;const ok=find().size>0||x.t>W||y.t>W;g[r][c]=x;g[r2][c2]=y;if(ok)o.push([x,y])}return o}
+function deal(){let T;do{T=[];for(let r=0;r<N;r++){T[r]=[];for(let c=0;c<N;c++){let t;do{t=rnd()}while((c>1&&T[r][c-1].t==t&&T[r][c-2].t==t)||(r>1&&T[r-1][c].t==t&&T[r-2][c].t==t));T[r][c]={t}}}g=T}while(!moves().length);
+ const all=[];for(let r=0;r<N;r++)for(let c=0;c<N;c++){const b=mk(g[r][c].t,r-N-2,c);b.e.style.transitionDelay=(c*40+(N-r)*25)+'ms';g[r][c]=b;all.push(b)}
+ B.offsetHeight;all.forEach(b=>place(b,b.r+N+2,b.c));return all}
+function rowSet(q){const m=new Set(g[q.r]);if(q.t==RU)g.forEach(w=>m.add(w[q.c]));m.v=new Map();m.forEach(b=>m.v.set(b,val(b)));
+ fx('streak','top:'+q.r*12.5+'%');if(q.t==RU)fx('streak v','left:'+q.c*12.5+'%');whoosh(.9);
+ B.animate([{transform:'translate(0)'},{transform:'translate(-5px,2px)'},{transform:'translate(5px,-2px)'},{transform:'translate(0)'}],{duration:300});return m}
+async function resolve(f){let combo=0;
+ for(;;){const m=f||find();f=0;if(!m.size)break;combo++;
+  const ws=[...m].filter(b=>b.t==W),mul=combo*(ws.length?3:1),pts=[...m].reduce((a,b)=>a+m.v.get(b),0)*mul;
+  score+=pts;lv+=pts;ui();
+  if(ws.length){say('ONYX WILD! Points tripled!');fx('ring',pos(ws[0]));fx('x2 big',pos(ws[0]),'x3');[880,1175,1568,2093].forEach((f,i)=>tone(f,.1+i*.07,.35,.1))}
+  else if(combo>1)say('Chain x'+combo+'!');else if(m.size>3)say(m.size+' gems!');
+  m.forEach(b=>{b.e.classList.add('pop');burst(b);fx('pv',pos(b)+';--c:'+COL[b.t],'+'+m.v.get(b)*mul);g[b.r][b.c]=null});
+  chime([...m],combo);await sleep(300);m.forEach(b=>b.e.remove());
+  [[m.big,DI],[m.big5,RU]].forEach(([l,k])=>(l||[]).forEach(b=>{if(!g[b.r][b.c]){const q=mk(k,b.r,b.c);q.e.classList.add('born');g[b.r][b.c]=q;tone(k==RU?1900:1500,0,.25,.12)}}));
+  const fr=[];for(let c=0;c<N;c++){let w=N-1;
+   for(let r=N-1;r>=0;r--){const b=g[r][c];if(b){if(w!=r){g[w][c]=b;g[r][c]=null;place(b,w,c)}w--}}
+   for(let r=w,k=1;r>=0;r--,k++){const x=Math.random()<.06,b=mk(x?W:rnd(),-k,c);if(x)tone(2093,.45,.3,.07);g[r][c]=b;fr.push([b,r,c])}}
+  B.offsetHeight;fr.forEach(([b,r,c])=>place(b,r,c));await sleep(450)}}
+async function reRack(m){say(m||'No moves left. Re-racking!');whoosh(.5);const old=g.flat();
+ old.forEach(b=>{b.e.style.transitionDelay=(b.c*30+(N-b.r)*20)+'ms';place(b,b.r+N+2,b.c)});await sleep(950);old.forEach(b=>b.e.remove());
+ const all=deal();await sleep(1000);all.forEach(b=>b.e.style.transitionDelay='')}
+function rain(){const R=$('rain');for(let i=0;i<48;i++){const e=document.createElement('div'),s=24+Math.random()*30;e.className='rg';e.innerHTML=SV[Math.random()*10|0];e.style.cssText='left:'+Math.random()*100+'%;width:'+s+'px;height:'+s+'px;animation-delay:'+Math.random()+'s;--r:'+(Math.random()*720-360)+'deg';R.appendChild(e);setTimeout(()=>e.remove(),4200)}}
+function sflash(){const f=document.createElement('div');f.className='sflash';$('rain').appendChild(f);setTimeout(()=>f.remove(),900)}
+async function megaBlast(a,b){const all=g.flat(),cs=B.clientWidth/N,cx=((a.c+b.c)/2+.5)*cs,cy=((a.r+b.r)/2+.5)*cs,p='left:'+cx+'px;top:'+cy+'px',pts=all.reduce((s,x)=>s+val(x),0)*3;
+ say('Mega blast charging...');whoosh(1);all.forEach(x=>x.e.classList.add('shk'));await sleep(900);all.forEach(x=>x.e.classList.add('shk2'));await sleep(900);
+ all.forEach(x=>x.e.classList.remove('shk','shk2'));score+=pts;lv+=pts;ui();say('MEGA BLAST! +'+pts+' points');
+ fx('flash','');[0,140,280,420,560].forEach(d=>setTimeout(()=>fx('ring',p),d));rain();sflash();const fr=document.querySelector('.fr');fr.classList.add('glow');setTimeout(()=>fr.classList.remove('glow'),2200);
+ all.forEach(x=>setTimeout(()=>{x.e.classList.add('pop');burst(x)},Math.hypot((x.c+.5)*cs-cx,(x.r+.5)*cs-cy)/cs*60));
+ fx('x2 big','left:50%;top:40%','MEGA BLAST!');setTimeout(()=>fx('x2 big','left:50%;top:58%','+'+pts),250);
+ boom();setTimeout(boom,300);setTimeout(boom,650);[392,523,659,784,1047,1319,1568,2093].forEach((f,i)=>tone(f,i*.09,.5,.14,'triangle'));for(let i=0;i<10;i++)ting(1.2+i*.12,.5+i*.07);
+ fr.animate([{transform:'translate(0)'},{transform:'translate(-10px,5px)'},{transform:'translate(10px,-5px)'},{transform:'translate(-8px,-4px)'},{transform:'translate(8px,4px)'},{transform:'translate(-5px,3px)'},{transform:'translate(0)'}],{duration:1100});
+ await sleep(2000);await reRack('Mega blast! Fresh rack.');freshRack=true}
+async function levelUp(first){const bonus=first?shots*100:0,sur=lv-target(level);score+=bonus;level++;lv=Math.max(0,sur);shots=shotsFor(level);const more=lv>=target(level);ui();
+ const bn=$('bn');bn.innerHTML='<b>Level '+(level-1)+' clear!</b>'+(bonus?'+'+bonus+' shot bonus<br>':'')+(lv?lv+' points carried over':'');bn.hidden=true;void bn.offsetWidth;bn.hidden=false;
+ fx('flash','');[523,659,784,1047].forEach((f,i)=>tone(f,i*.09,.4,.14,'triangle'));say('Level '+level+': reach '+target(level)+' points in '+shots+' shots.');
+ await sleep(more?1500:1800);bn.hidden=true;if(!more){if(!freshRack)await reRack('Level '+level+': fresh rack.');freshRack=false}}
+/* input */
+function unsel(){if(sel)sel.e.classList.remove('sel');sel=null}
+function clearHint(){clearTimeout(hintT);hinted.forEach(b=>b.e.classList.remove('hint'));hinted=[]}
+function arm(){clearHint();hintT=setTimeout(()=>{if(busy){arm();return}const m=moves();if(!m.length)return;hinted=m[Math.random()*m.length|0];hinted.forEach(b=>b.e.classList.add('hint'))},8000)}
+function down(ev,b){if(busy)return;ev.preventDefault();au();arm();
+ if(sel===b){unsel();return}
+ if(sel&&adj(sel,b)){swap(sel,b);return}
+ unsel();sel=b;b.e.classList.add('sel');const x=ev.clientX,y=ev.clientY;
+ const off=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',off)};
+ function mv(e){const dx=e.clientX-x,dy=e.clientY-y;if(Math.hypot(dx,dy)<18)return;off();let r=b.r,c=b.c;if(Math.abs(dx)>Math.abs(dy))c+=dx>0?1:-1;else r+=dy>0?1:-1;if(g[r]&&g[r][c])swap(b,g[r][c])}
+ addEventListener('pointermove',mv);addEventListener('pointerup',off)}
+function swapC(a,b){const ra=a.r,ca=a.c,rb=b.r,cb=b.c;g[ra][ca]=b;g[rb][cb]=a;place(a,rb,cb);place(b,ra,ca)}
+async function swap(a,b){if(busy)return;busy=true;unsel();clearHint();tone(700,0,.1,.1);swapC(a,b);await sleep(280);
+ const sp=x=>x.t>W,q=sp(a)?a:sp(b)?b:null,mega=(a.t==DI&&b.t==DI)||(a.t==RU&&b.t==RU);
+ if(!q&&!find().size){swapC(a,b);await sleep(280);say('No match there. Try another swap.');tone(180,0,.12,.25,'triangle');busy=false;arm();return}
+ if(q&&q.t==RU){shots+=2;fx('x2',pos(q),'+2 SHOTS');[784,988,1175,1568].forEach((f,i)=>tone(f,i*.07,.3,.12,'triangle'))}else shots--;ui();
+ if(mega)await megaBlast(a,b);else await resolve(q?rowSet(q):0);
+ if(lv>=target(level)){let f=1;while(lv>=target(level)){await levelUp(f);f=0}}else if(shots<=0){over();return}
+ if(!moves().length)await reRack();
+ busy=false;freshRack=false;arm()}
+/* flow */
+function show(h,html,btn,fn){$('oh').textContent=h;$('ob').innerHTML=html;$('og').textContent=btn;$('og').onclick=fn;$('ov').hidden=false}
+const RULES='<ul><li>Swap neighbours to line up 3 or more of the same gem.</li><li>Each gem scores its rank x 20:<span class="gr"><span class="gi">{0}<span class="n">Sapphire</span><span class="p">20</span></span><span class="gi">{1}<span class="n">Emerald</span><span class="p">40</span></span><span class="gi">{2}<span class="n">Ruby</span><span class="p">60</span></span><span class="gi">{3}<span class="n">Amber</span><span class="p">80</span></span><span class="gi">{4}<span class="n">Amethyst</span><span class="p">100</span></span><span class="gi">{5}<span class="n">Topaz</span><span class="p">120</span></span><span class="gi">{6}<span class="n">Diamond</span><span class="p">140</span></span></span></li><li class="ic">{7}<span>Black onyx is wild: it matches anything and triples the match.</span></li><li class="ic">{8}<span>4 in a line makes a multicoloured opal: swap it to clear its row.</span></li><li class="ic">{9}<span>5 in a line makes a tourmaline: swapping it is free, clears its row and column and gains you 2 shots.</span></li><li class="ic"><span class="ri2">{8}{9}</span><span>Swap two opals, or two tourmalines, for a MEGA BLAST that clears the table.</span></li><li>Chains multiply your score. Reach the level target before your shots run out; extra points carry over.</li><li>Shots: levels 1-5 give 10, levels 6-10 give 20, level 11 and up give 25.</li></ul>';
+async function start(){au();playing=true;musicSync();$('ov').hidden=true;score=0;level=1;lv=0;shots=shotsFor(1);busy=true;sel=null;clearHint();freshRack=false;B.querySelectorAll('.gm').forEach(x=>x.remove());say('Swap two neighbouring gems to match 3 or more.');ui();
+ const all=deal();await sleep(1000);all.forEach(b=>b.e.style.transitionDelay='');busy=false;arm()}
+function over(){busy=true;clearHint();const nb=score>best;if(nb){best=score;try{localStorage.setItem('gm-best',best)}catch(e){}}ui();
+ if(nb)[523,659,784,1047].forEach((f,i)=>tone(f,i*.1,.4,.16,'triangle'));
+ show('Out of shots','Level '+level+' reached<b>'+score+'</b>'+(nb?'New best score!':'Best: '+best),'Play again',start)}
+$('rb').onclick=()=>{au();show('How to play',RULES.replace(/\{(\d)\}/g,(m,i)=>'<span class="ri">'+SV[i]+'</span>'),'Got it',()=>{$('ov').hidden=true})};
+$('mb').onclick=()=>{mute=!mute;musicSync();$('mb').textContent=mute?'🔇':'🔊';if(!mute)ting(1)};
+ui();show('Gem Match','Match sapphires, emeralds, rubies, ambers, amethysts, topazes and diamonds. Black onyx is wild, 4 in a line makes an opal and 5 makes a tourmaline.','Play',start);
+</script></body></html>
