@@ -92,10 +92,43 @@ h1.ttl svg{width:clamp(24px,7.5vw,32px);height:clamp(24px,7.5vw,32px);animation:
 #top{position:absolute;inset:3.4%;pointer-events:none;z-index:7;container-type:inline-size}
 @media (prefers-reduced-motion:reduce){.gm svg,.gm.sp svg,.gm.w svg{animation:none}}
 </style></head><body><main>
-<a href="https://lst-2k.github.io/mindgames/" 
-   style="position: fixed; top: 15px; left: 15px; z-index: 9999; background: #061811; color: #d4af37; border: 2px solid #d4af37; padding: 8px 16px; border-radius: 8px; font-family: sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: inline-flex; items-center: center;">
-   ← Back to Games
-</a>
+<!-- Floating Menu Button & Popup (Top Left) -->
+<div id="portal-menu-container" style="position: fixed; top: 20px; left: 20px; z-index: 9999; font-family: sans-serif;">
+    
+    <!-- 3-Line Square Menu Button -->
+    <button onclick="togglePortalMenu()" 
+            title="Menu"
+            style="width: 42px; height: 42px; background: #061811; color: #d4af37; border: 2px solid #d4af37; border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+        <span style="width: 20px; height: 2px; background-color: #d4af37; border-radius: 2px; transition: 0.3s;"></span>
+        <span style="width: 20px; height: 2px; background-color: #d4af37; border-radius: 2px; transition: 0.3s;"></span>
+        <span style="width: 20px; height: 2px; background-color: #d4af37; border-radius: 2px; transition: 0.3s;"></span>
+    </button>
+
+    <!-- Hidden Dropdown Menu (Opens Downward) -->
+    <div id="portal-menu-dropdown" style="display: none; margin-top: 10px; background: #061811; border: 2px solid #d4af37; border-radius: 10px; padding: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); min-width: 150px;">
+        <a href="https://lst-2k.github.io/mindgames/" 
+           style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #d4af37; text-decoration: none; font-size: 13px; font-weight: bold; padding: 8px 12px; border-radius: 6px; background: rgba(212, 175, 55, 0.1); transition: background 0.2s;"
+           onmouseover="this.style.background='rgba(212, 175, 55, 0.25)'" 
+           onmouseout="this.style.background='rgba(212, 175, 55, 0.1)'">
+           ← Back to Games
+        </a>
+    </div>
+</div>
+
+<script>
+    function togglePortalMenu() {
+        const menu = document.getElementById('portal-menu-dropdown');
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Close menu when clicking outside of it
+    document.addEventListener('click', function(event) {
+        const container = document.getElementById('portal-menu-container');
+        if (container && !container.contains(event.target)) {
+            document.getElementById('portal-menu-dropdown').style.display = 'none';
+        }
+    });
+</script>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="df"></defs></svg>
 <div class="hd"><h1 class="ttl"><span id="gl"></span><span class="t3" data-t="Gem Match"><span class="f">Gem Match</span></span><span id="gr"></span></h1></div>
 <div class="st"><div><b id="sc">0</b><span>Score</span></div><div><b id="sh">10</b><span>Shots left</span></div><div><b id="be">0</b><span>Best</span></div></div>
